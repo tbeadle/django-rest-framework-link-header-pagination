@@ -2,7 +2,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.utils.urls import remove_query_param, replace_query_param
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 __all__ = [
     'LinkHeaderPagination',
