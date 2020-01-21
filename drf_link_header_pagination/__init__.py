@@ -77,11 +77,13 @@ class LinkHeaderJsonKeyCursorPagination(LinkHeaderMixin, CursorPagination):
     """
 
     def get_paginated_response(self, data):
-        next_url = self.get_next_link()
-        previous_url = self.get_previous_link()
 
         return super().get_paginated_response(
             OrderedDict(
-                [("next", next_url), ("previous", previous_url), ("results", data)]
+                [
+                    ("next", self.get_next_link()),
+                    ("previous", self.get_previous_link()),
+                    ("results", data),
+                ]
             )
         )
