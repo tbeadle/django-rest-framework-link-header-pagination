@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 import pytest
-from django.test import override_settings
 from rest_framework import exceptions
 from rest_framework.pagination import PAGE_BREAK, PageLink
 from rest_framework.request import Request
@@ -34,7 +33,6 @@ class TestLinkHeaderPagination:
     def get_html_context(self):
         return self.pagination.get_html_context()
 
-    @override_settings(ALLOWED_HOSTS=["testserver"])
     def test_no_page_number(self):
         request = Request(factory.get("/"))
         queryset = self.paginate_queryset(request)
@@ -60,7 +58,6 @@ class TestLinkHeaderPagination:
         assert self.pagination.display_page_controls
         assert isinstance(self.pagination.to_html(), type(""))
 
-    @override_settings(ALLOWED_HOSTS=["testserver"])
     def test_second_page(self):
         request = Request(factory.get("/", {"page": 2}))
         queryset = self.paginate_queryset(request)
@@ -86,7 +83,6 @@ class TestLinkHeaderPagination:
             ],
         }
 
-    @override_settings(ALLOWED_HOSTS=["testserver"])
     def test_last_page(self):
         request = Request(factory.get("/", {"page": "last"}))
         queryset = self.paginate_queryset(request)

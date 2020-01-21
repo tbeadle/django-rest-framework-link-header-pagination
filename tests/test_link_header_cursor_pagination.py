@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 import pytest
-from django.test import override_settings
 from rest_framework import exceptions
 from rest_framework.request import Request
 from rest_framework.test import APIRequestFactory
@@ -56,7 +55,6 @@ class TestLinkHeaderCursorPagination:
     def get_html_context(self):
         return self.pagination.get_html_context()
 
-    @override_settings(ALLOWED_HOSTS=["testserver"])
     def test_no_cursor(self):
         url = "/"
         request = Request(factory.get(url))
@@ -76,7 +74,6 @@ class TestLinkHeaderCursorPagination:
         assert self.pagination.display_page_controls
         assert isinstance(self.pagination.to_html(), type(""))
 
-    @override_settings(ALLOWED_HOSTS=["testserver"])
     def test_second_page(self):
         first_page_url = "/"
         (_, second_page_url) = self.get_page_urls(first_page_url)
@@ -98,7 +95,6 @@ class TestLinkHeaderCursorPagination:
             "next_url": next_url,
         }
 
-    @override_settings(ALLOWED_HOSTS=["testserver"])
     def test_invalid_page(self):
         request = Request(factory.get("/", {"cursor": "invalid"}))
         with pytest.raises(exceptions.NotFound):
