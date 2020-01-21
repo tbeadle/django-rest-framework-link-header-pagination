@@ -32,15 +32,15 @@ class LinkHeaderMixin:
 
         return {"Link": ", ".join(header_links)} if header_links else {}
 
+    def get_paginated_response(self, data):
+        return Response(data, headers=self.get_headers())
+
 
 class LinkHeaderPagination(LinkHeaderMixin, PageNumberPagination):
     """ Inform the user of pagination links via response headers, similar to
     what's described in
     https://developer.github.com/guides/traversing-with-pagination/.
     """
-
-    def get_paginated_response(self, data):
-        return Response(data, headers=self.get_headers())
 
     def get_first_link(self):
         if not self.page.has_previous():
@@ -67,8 +67,7 @@ class LinkHeaderCursorPagination(LinkHeaderMixin, CursorPagination):
     Provides standard json key pagination links in addition to LinkHeader.
     """
 
-    def get_paginated_response(self, data):
-        return Response(data, headers=self.get_headers())
+    pass
 
 
 class LinkHeaderJsonKeyCursorPagination(LinkHeaderMixin, CursorPagination):
@@ -81,9 +80,8 @@ class LinkHeaderJsonKeyCursorPagination(LinkHeaderMixin, CursorPagination):
         next_url = self.get_next_link()
         previous_url = self.get_previous_link()
 
-        return Response(
+        return super().get_paginated_response(
             OrderedDict(
                 [("next", next_url), ("previous", previous_url), ("results", data)]
-            ),
-            headers=self.get_headers(),
+            )
         )
