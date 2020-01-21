@@ -29,41 +29,7 @@ class TestLinkHeaderJsonKeyCursorPagination(TestLinkHeaderCursorPagination):
 
         self.pagination = ExamplePagination()
         self.queryset = MockQuerySet(
-            [
-                MockObject(idx)
-                for idx in [
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    2,
-                    3,
-                    4,
-                    4,
-                    4,
-                    4,
-                    5,
-                    6,
-                    7,
-                    7,
-                    7,
-                    7,
-                    7,
-                    7,
-                    7,
-                    7,
-                    7,
-                    8,
-                    9,
-                    9,
-                    9,
-                    9,
-                    9,
-                    9,
-                ]
-            ]
+            [MockObject(idx) for idx in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]]
         )
 
     @override_settings(ALLOWED_HOSTS=["testserver"])
@@ -74,24 +40,24 @@ class TestLinkHeaderJsonKeyCursorPagination(TestLinkHeaderCursorPagination):
         response = self.get_paginated_response(queryset)
         response_next_url = response.data["next"]
         response_previous_url = response.data["previous"]
-        (_, _, _, previous_url, next_url) = self.get_pages(url)
+        (previous_url, next_url) = self.get_pages(url)
         assert response_next_url == next_url
         assert response_previous_url == previous_url
         response_data_values = [item.value for item in response.data["results"]]
-        assert response_data_values == [1, 1, 1, 1, 1]
+        assert response_data_values == [1, 2, 3, 4, 5]
 
     @override_settings(ALLOWED_HOSTS=["testserver"])
     def test_second_page(self):
         first_page_url = "/"
-        (_, _, _, _, second_page_url) = self.get_pages(first_page_url)
+        (_, second_page_url) = self.get_pages(first_page_url)
 
         request = Request(factory.get(second_page_url))
         queryset = self.paginate_queryset(request)
         response = self.get_paginated_response(queryset)
         response_next_url = response.data["next"]
         response_previous_url = response.data["previous"]
-        (_, _, _, previous_url, next_url) = self.get_pages(second_page_url)
+        (previous_url, next_url) = self.get_pages(second_page_url)
         assert response_next_url == next_url
         assert response_previous_url == previous_url
         response_data_values = [item.value for item in response.data["results"]]
-        assert response_data_values == [1, 2, 3, 4, 4]
+        assert response_data_values == [6, 7, 8, 9, 10]

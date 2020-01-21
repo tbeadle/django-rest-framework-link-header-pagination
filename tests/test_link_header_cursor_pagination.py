@@ -31,70 +31,21 @@ class TestLinkHeaderCursorPagination:
 
         self.pagination = ExamplePagination()
         self.queryset = MockQuerySet(
-            [
-                MockObject(idx)
-                for idx in [
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    2,
-                    3,
-                    4,
-                    4,
-                    4,
-                    4,
-                    5,
-                    6,
-                    7,
-                    7,
-                    7,
-                    7,
-                    7,
-                    7,
-                    7,
-                    7,
-                    7,
-                    8,
-                    9,
-                    9,
-                    9,
-                    9,
-                    9,
-                    9,
-                ]
-            ]
+            [MockObject(idx) for idx in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]]
         )
 
     def get_pages(self, url):
         """
         Given a URL return a tuple of:
-        (previous page, current page, next page, previous url, next url)
+        (previous url, next url)
         """
         request = Request(factory.get(url))
-        queryset = self.pagination.paginate_queryset(self.queryset, request)
-        current = [item.created for item in queryset]
+        self.pagination.paginate_queryset(self.queryset, request)
 
         next_url = self.pagination.get_next_link()
         previous_url = self.pagination.get_previous_link()
 
-        if next_url is not None:
-            request = Request(factory.get(next_url))
-            queryset = self.pagination.paginate_queryset(self.queryset, request)
-            next = [item.created for item in queryset]
-        else:
-            next = None
-
-        if previous_url is not None:
-            request = Request(factory.get(previous_url))
-            queryset = self.pagination.paginate_queryset(self.queryset, request)
-            previous = [item.created for item in queryset]
-        else:
-            previous = None
-
-        return (previous, current, next, previous_url, next_url)
+        return (previous_url, next_url)
 
     def paginate_queryset(self, request):
         return list(self.pagination.paginate_queryset(self.queryset, request))
@@ -114,9 +65,9 @@ class TestLinkHeaderCursorPagination:
         context = self.get_html_context()
         queryset_values = [item.value for item in queryset]
         response_data_values = [item.value for item in response.data]
-        (previous, current, next, previous_url, next_url) = self.get_pages(url)
-        assert queryset_values == [1, 1, 1, 1, 1]
-        assert response_data_values == [1, 1, 1, 1, 1]
+        (previous_url, next_url) = self.get_pages(url)
+        assert queryset_values == [1, 2, 3, 4, 5]
+        assert response_data_values == [1, 2, 3, 4, 5]
         assert response["Link"] == ('<{}>; rel="next"'.format(next_url))
         assert context == {
             "previous_url": None,
@@ -128,7 +79,7 @@ class TestLinkHeaderCursorPagination:
     @override_settings(ALLOWED_HOSTS=["testserver"])
     def test_second_page(self):
         first_page_url = "/"
-        (_, _, _, _, second_page_url) = self.get_pages(first_page_url)
+        (_, second_page_url) = self.get_pages(first_page_url)
 
         request = Request(factory.get(second_page_url))
         queryset = self.paginate_queryset(request)
@@ -136,9 +87,9 @@ class TestLinkHeaderCursorPagination:
         context = self.get_html_context()
         queryset_values = [item.value for item in queryset]
         response_data_values = [item.value for item in response.data]
-        (_, _, _, previous_url, next_url) = self.get_pages(second_page_url)
-        assert queryset_values == [1, 2, 3, 4, 4]
-        assert response_data_values == [1, 2, 3, 4, 4]
+        (previous_url, next_url) = self.get_pages(second_page_url)
+        assert queryset_values == [6, 7, 8, 9, 10]
+        assert response_data_values == [6, 7, 8, 9, 10]
         assert response["Link"] == ('<{}>; rel="prev", <{}>; rel="next"').format(
             previous_url, next_url
         )
