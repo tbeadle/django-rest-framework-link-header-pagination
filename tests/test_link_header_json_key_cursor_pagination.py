@@ -12,14 +12,14 @@ from .test_link_header_cursor_pagination import TestLinkHeaderCursorPagination
 factory = APIRequestFactory()
 
 
-class TestLinkHeaderJsonKeyCursorPagination(TestLinkHeaderCursorPagination):
+class TestLinkHeaderLinkResponseCursorPagination(TestLinkHeaderCursorPagination):
     """
-    Unit tests for `pagination.LinkHeaderJsonKeyCursorPagination`.
+    Unit tests for `pagination.LinkHeaderLinkResponseCursorPagination`.
     """
 
     def setup(self):
         class ExamplePagination(
-            drf_link_header_pagination.LinkHeaderJsonKeyCursorPagination
+            drf_link_header_pagination.LinkHeaderLinkResponseCursorPagination
         ):
             page_size = 5
             page_size_query_param = "page_size"

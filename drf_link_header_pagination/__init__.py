@@ -9,7 +9,7 @@ __version__ = "0.1.2"
 __all__ = [
     "LinkHeaderPagination",
     "LinkHeaderCursorPagination",
-    "LinkHeaderJsonKeyCursorPagination",
+    "LinkHeaderLinkResponseCursorPagination",
 ]
 
 
@@ -34,6 +34,25 @@ class LinkHeaderMixin:
 
     def get_paginated_response(self, data):
         return Response(data, headers=self.get_headers())
+
+
+class LinkResponseMixin(LinkHeaderMixin):
+    """
+    Used in conjunction with LinkHeaderMixin in order to provide pagination links via:
+        - content of the response
+        - headers.
+    """
+
+    def get_paginated_response(self, data):
+        return super().get_paginated_response(
+            OrderedDict(
+                [
+                    ("next", self.get_next_link()),
+                    ("previous", self.get_previous_link()),
+                    ("results", data),
+                ]
+            )
+        )
 
 
 class LinkHeaderPagination(LinkHeaderMixin, PageNumberPagination):
@@ -63,27 +82,18 @@ class LinkHeaderPagination(LinkHeaderMixin, PageNumberPagination):
 
 class LinkHeaderCursorPagination(LinkHeaderMixin, CursorPagination):
     """
-    Customized cursor pagination class utilizing Link header.
-    Provides standard json key pagination links in addition to LinkHeader.
+    Customized cursor pagination with links provided via:
+        - headers.
     """
 
     pass
 
 
-class LinkHeaderJsonKeyCursorPagination(LinkHeaderMixin, CursorPagination):
+class LinkHeaderLinkResponseCursorPagination(LinkResponseMixin, CursorPagination):
     """
-    Provides cursor pagination with standard json key pagination links in
-    addition to LinkHeader.
+    Customized cursor pagination with links provided via:
+        - content of the response
+        - headers.
     """
 
-    def get_paginated_response(self, data):
-
-        return super().get_paginated_response(
-            OrderedDict(
-                [
-                    ("next", self.get_next_link()),
-                    ("previous", self.get_previous_link()),
-                    ("results", data),
-                ]
-            )
-        )
+    pass
