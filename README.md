@@ -4,7 +4,7 @@
 
 ## Overview
 
-Provide pagination using a `Link` HTTP header as described in [Github's developer documentation](github-pagination)
+Provide pagination using a `Link` HTTP header as described in [Github's developer documentation](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#pagination)
 
 This pagination style accepts a single page number in the request query parameters. The response uses an HTTP header called `Link` to provide the URLs for the next, previous, first, and last pages. If you are using Python's [Requests][requests] library to make the request, this header is automatically parsed for you as described [here][requests-link-header].
 
