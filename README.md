@@ -4,7 +4,7 @@
 
 ## Overview
 
-Provide pagination using a `Link` HTTP header as described in [Github's developer documentation](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#pagination)
+Provide pagination using a `Link` HTTP header as described in [GitHub's REST API documentation][github-pagination].
 
 This pagination style accepts a single page number in the request query parameters. The response uses an HTTP header called `Link` to provide the URLs for the next, previous, first, and last pages. If you are using Python's [Requests][requests] library to make the request, this header is automatically parsed for you as described [here][requests-link-header].
 
@@ -83,7 +83,7 @@ $ tox
 
 [build-status-image]: https://secure.travis-ci.org/tbeadle/django-rest-framework-link-header-pagination.svg?branch=master
 [pypi-version]: https://img.shields.io/pypi/v/djangorestframework-link-header-pagination.svg
-[github-pagination]: https://developer.github.com/guides/traversing-with-pagination/
+[github-pagination]: https://docs.github.com/en/rest/guides/traversing-with-pagination
 [requests]: http://docs.python-requests.org
 [requests-link-header]: http://docs.python-requests.org/en/master/user/advanced/#link-headers
 [page-number-pagination-configuration]: http://www.django-rest-framework.org/api-guide/pagination/#pagenumberpagination
