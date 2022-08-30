@@ -27,9 +27,9 @@ This pagination style accepts a single page number in the request query paramete
 
 ## Requirements
 
- -  Python (2.7, 3.4, 3.5, 3.6)
- -  Django (1.8, 1.10, 1.11)
- -  Django REST Framework (3.6)
+ -  Python (3.7+)
+ -  Django (3.2+)
+ -  Django REST Framework (3.11+)
 
 ## Installation
 
@@ -61,19 +61,7 @@ The configuration is the same as for
 
 ## Testing
 
-Install testing requirements.
-
-```bash
-$ pip install -r requirements.txt
-```
-
-Run with runtests.
-
-```bash
-$ ./runtests.py
-```
-
-You can also use the excellent [tox](tox) testing tool to run the tests
+Use the excellent [tox](tox) testing tool to run the tests
 against all supported versions of Python and Django. Install tox
 globally, and then simply run:
 
