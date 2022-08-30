@@ -4,8 +4,6 @@ from rest_framework.pagination import CursorPagination, PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.utils.urls import remove_query_param, replace_query_param
 
-__version__ = "0.1.2"
-
 __all__ = [
     "LinkHeaderPagination",
     "LinkHeaderCursorPagination",

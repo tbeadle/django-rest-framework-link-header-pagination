@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "drf_link_header_pagination"
+description = "Link Header Pagination for Django Rest Framework"
+readme = "README.md"
+requires-python = ">=3.6"
+license = {text = "BSD 3-Clause License"}
+classifiers = [
+    "Framework :: Django",
+    "Programming Language :: Python :: 3",
+    'Intended Audience :: Developers',
+    'Operating System :: OS Independent',
+    'Natural Language :: English',
+    'Topic :: Internet :: WWW/HTTP',
+]
+dependencies = [
+    "djangorestframework>=3.11",
+]
+dynamic = ["version"]
+
+[tool.setuptools_scm]
