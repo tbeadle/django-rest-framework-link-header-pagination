@@ -36,23 +36,6 @@ class LinkHeaderMixin:
         return Response(data, headers=self.get_headers())
 
 
-class LinkResponseMixin(LinkHeaderMixin):
-    """
-    Used in conjunction with LinkHeaderMixin in order to provide pagination links via:
-        - content of the response
-        - headers.
-    """
-
-    def get_paginated_response(self, data):
-        return super().get_paginated_response(
-            {
-                "next": self.get_next_link(),
-                "previous": self.get_previous_link(),
-                "results": data,
-            }
-        )
-
-
 class LinkHeaderPagination(LinkHeaderMixin, PageNumberPagination):
     """Inform the user of pagination links via response headers, similar to
     what's described in
@@ -77,6 +60,9 @@ class LinkHeaderPagination(LinkHeaderMixin, PageNumberPagination):
             url, self.page_query_param, self.page.paginator.num_pages
         )
 
+    def get_paginated_response_schema(self, schema):
+        return schema
+
 
 class LinkHeaderCursorPagination(LinkHeaderMixin, CursorPagination):
     """
@@ -84,14 +70,22 @@ class LinkHeaderCursorPagination(LinkHeaderMixin, CursorPagination):
         - headers.
     """
 
-    pass
+    def get_paginated_response_schema(self, schema):
+        return schema
 
 
-class LinkHeaderLinkResponseCursorPagination(LinkResponseMixin, CursorPagination):
+class LinkHeaderLinkResponseCursorPagination(LinkHeaderMixin, CursorPagination):
     """
     Customized cursor pagination with links provided via:
         - content of the response
         - headers.
     """
 
-    pass
+    def get_paginated_response(self, data):
+        return super().get_paginated_response(
+            {
+                "next": self.get_next_link(),
+                "previous": self.get_previous_link(),
+                "results": data,
+            }
+        )
