@@ -54,6 +54,12 @@ REST_FRAMEWORK = {
 
 On `GenericAPIView` subclasses you may also set the `pagination_class` attribute to select `LinkHeaderPagination` on a per-view basis.
 
+Other pagination classes that are available are:
+
+- `LinkHeaderCursorPagination`: This is similar to the normal [`CursorPagination`](cursor-pagination) class but using the `Link` header to return only the `next` and/or `prev` links. The `first` and `last` links are unavailable.
+- `LinkHeaderLinkResponseCursorPagination`: This is similar to
+  `LinkHeaderCursorPagination`, but in addition to the `next` and/or `prev` URL's being in the `Link` header, the content of the response body is updated to include them as well. The body will be an object with the keys `next` (the next page's URL or None), `previous` (the previous page's URL or None), and `results` (the original content of the body).
+
 ## Configuration
 
 The configuration is the same as for
@@ -75,4 +81,5 @@ $ tox
 [requests]: http://docs.python-requests.org
 [requests-link-header]: http://docs.python-requests.org/en/master/user/advanced/#link-headers
 [page-number-pagination-configuration]: http://www.django-rest-framework.org/api-guide/pagination/#pagenumberpagination
+[cursor-pagination]: https://www.django-rest-framework.org/api-guide/pagination/#cursorpagination
 [tox]: http://tox.readthedocs.org/en/latest/
