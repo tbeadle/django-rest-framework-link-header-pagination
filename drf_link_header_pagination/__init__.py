@@ -1,51 +1,97 @@
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import CursorPagination, PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.utils.urls import remove_query_param, replace_query_param
 
 __all__ = [
-    'LinkHeaderPagination',
+    "LinkHeaderPagination",
+    "LinkHeaderCursorPagination",
+    "LinkHeaderLinkResponseCursorPagination",
 ]
 
 
-class LinkHeaderPagination(PageNumberPagination):
-    """ Inform the user of pagination links via response headers, similar to
+class LinkHeaderMixin:
+    def get_headers(self):
+        """Prepare and return link headers."""
+        links = []
+        for label, method_name in (
+            ("prev", "get_previous_link"),
+            ("next", "get_next_link"),
+            ("first", "get_first_link"),
+            ("last", "get_last_link"),
+        ):
+            try:
+                method = getattr(self, method_name)
+            except AttributeError:
+                continue
+            links.append((method(), label))
+
+        header_links = []
+        for url, label in links:
+            if url is not None:
+                header_links.append('<{}>; rel="{}"'.format(url, label))
+
+        return {"Link": ", ".join(header_links)} if header_links else {}
+
+    def get_paginated_response(self, data):
+        return Response(data, headers=self.get_headers())
+
+
+class LinkResponseMixin(LinkHeaderMixin):
+    """
+    Used in conjunction with LinkHeaderMixin in order to provide pagination links via:
+        - content of the response
+        - headers.
+    """
+
+    def get_paginated_response(self, data):
+        return super().get_paginated_response(
+            {
+                "next": self.get_next_link(),
+                "previous": self.get_previous_link(),
+                "results": data,
+            }
+        )
+
+
+class LinkHeaderPagination(LinkHeaderMixin, PageNumberPagination):
+    """Inform the user of pagination links via response headers, similar to
     what's described in
     https://developer.github.com/guides/traversing-with-pagination/.
     """
-    def get_paginated_response(self, data):
-        next_url = self.get_next_link()
-        previous_url = self.get_previous_link()
-        first_url = self.get_first_link()
-        last_url = self.get_last_link()
-
-        links = []
-        for url, label in (
-            (first_url, 'first'),
-            (previous_url, 'prev'),
-            (next_url, 'next'),
-            (last_url, 'last'),
-        ):
-            if url is not None:
-                links.append('<{}>; rel="{}"'.format(url, label))
-
-        headers = {'Link': ', '.join(links)} if links else {}
-
-        return Response(data, headers=headers)
 
     def get_first_link(self):
         if not self.page.has_previous():
             return None
-        else:
-            url = self.request.build_absolute_uri()
-            return remove_query_param(url, self.page_query_param)
+
+        url = self.request.build_absolute_uri()
+
+        return remove_query_param(url, self.page_query_param)
 
     def get_last_link(self):
         if not self.page.has_next():
             return None
-        else:
-            url = self.request.build_absolute_uri()
-            return replace_query_param(
-                url,
-                self.page_query_param,
-                self.page.paginator.num_pages,
-            )
+
+        url = self.request.build_absolute_uri()
+
+        return replace_query_param(
+            url, self.page_query_param, self.page.paginator.num_pages
+        )
+
+
+class LinkHeaderCursorPagination(LinkHeaderMixin, CursorPagination):
+    """
+    Customized cursor pagination with links provided via:
+        - headers.
+    """
+
+    pass
+
+
+class LinkHeaderLinkResponseCursorPagination(LinkResponseMixin, CursorPagination):
+    """
+    Customized cursor pagination with links provided via:
+        - content of the response
+        - headers.
+    """
+
+    pass
