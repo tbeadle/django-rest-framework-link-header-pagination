@@ -1,6 +1,3 @@
-# coding: utf-8
-from __future__ import unicode_literals
-
 import pytest
 from rest_framework import exceptions
 from rest_framework.pagination import PAGE_BREAK, PageLink

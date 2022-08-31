@@ -1,6 +1,3 @@
-# coding: utf-8
-from __future__ import unicode_literals
-
 from rest_framework.request import Request
 from rest_framework.test import APIRequestFactory
 

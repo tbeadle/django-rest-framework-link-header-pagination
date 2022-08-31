@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 from rest_framework.pagination import CursorPagination, PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.utils.urls import remove_query_param, replace_query_param
@@ -14,14 +12,18 @@ __all__ = [
 class LinkHeaderMixin:
     def get_headers(self):
         """Prepare and return link headers."""
-        links = ((self.get_previous_link(), "prev"), (self.get_next_link(), "next"))
-
-        if hasattr(self, "get_first_link") and hasattr(self, "get_last_link"):
-            links = (
-                *links,
-                (self.get_first_link(), "first"),
-                (self.get_last_link(), "last"),
-            )
+        links = []
+        for label, method_name in (
+            ("prev", "get_previous_link"),
+            ("next", "get_next_link"),
+            ("first", "get_first_link"),
+            ("last", "get_last_link"),
+        ):
+            try:
+                method = getattr(self, method_name)
+            except AttributeError:
+                continue
+            links.append((method(), label))
 
         header_links = []
         for url, label in links:
@@ -43,18 +45,16 @@ class LinkResponseMixin(LinkHeaderMixin):
 
     def get_paginated_response(self, data):
         return super().get_paginated_response(
-            OrderedDict(
-                [
-                    ("next", self.get_next_link()),
-                    ("previous", self.get_previous_link()),
-                    ("results", data),
-                ]
-            )
+            {
+                "next": self.get_next_link(),
+                "previous": self.get_previous_link(),
+                "results": data,
+            }
         )
 
 
 class LinkHeaderPagination(LinkHeaderMixin, PageNumberPagination):
-    """ Inform the user of pagination links via response headers, similar to
+    """Inform the user of pagination links via response headers, similar to
     what's described in
     https://developer.github.com/guides/traversing-with-pagination/.
     """

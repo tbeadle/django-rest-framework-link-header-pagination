@@ -1,6 +1,3 @@
-# coding: utf-8
-from __future__ import unicode_literals
-
 import pytest
 from rest_framework import exceptions
 from rest_framework.request import Request
@@ -72,7 +69,7 @@ class TestLinkHeaderCursorPagination:
             "next_url": next_url,
         }
         assert self.pagination.display_page_controls
-        assert isinstance(self.pagination.to_html(), type(""))
+        assert isinstance(self.pagination.to_html(), str)
 
     def test_second_page(self):
         first_page_url = "/"

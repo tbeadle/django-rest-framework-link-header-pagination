@@ -18,6 +18,3 @@ local/
 
 !.gitignore
 !.travis.yml
-
-.vscode
-.venv
