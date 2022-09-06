@@ -1,9 +1,10 @@
-from rest_framework.pagination import CursorPagination, PageNumberPagination
+from rest_framework.pagination import CursorPagination, PageNumberPagination, LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.utils.urls import remove_query_param, replace_query_param
 
 __all__ = [
     "LinkHeaderPagination",
+    "LinkHeaderLimitOffsetPagination",
     "LinkHeaderCursorPagination",
     "LinkHeaderLinkResponseCursorPagination",
 ]
@@ -34,6 +35,32 @@ class LinkHeaderMixin:
 
     def get_paginated_response(self, data):
         return Response(data, headers=self.get_headers())
+
+
+class LinkHeaderLimitOffsetPagination(LinkHeaderMixin, LimitOffsetPagination):
+    """
+    Link header pagination with offset/limit links. Implements the regular
+    `LimitOffsetPagination` module with `Link: ` headers instead.
+    """
+    def get_first_link(self):
+        url = self.request.build_absolute_uri()
+        url = replace_query_param(url, self.limit_query_param, self.limit)
+
+        return remove_query_param(url, self.offset_query_param)
+
+    def get_last_link(self):
+        if not self.get_next_link():
+            return None
+
+        offset = self.count - (self.count % self.limit)
+
+        url = self.request.build_absolute_uri()
+        url = replace_query_param(url, self.limit_query_param, self.limit)
+
+        return replace_query_param(url, self.offset_query_param, offset)
+
+    def get_paginated_response_schema(self, schema):
+        return schema
 
 
 class LinkHeaderPagination(LinkHeaderMixin, PageNumberPagination):
