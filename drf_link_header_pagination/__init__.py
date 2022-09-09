@@ -52,7 +52,10 @@ class LinkHeaderLimitOffsetPagination(LinkHeaderMixin, LimitOffsetPagination):
         if not self.get_next_link():
             return None
 
-        offset = self.count - (self.count % self.limit)
+        # We need to adjust for 0 offset, otherwise we'll get the last link
+        # to an empty page if count % limit == 0 (i.e. the "pages" line up
+        # exactly)
+        offset = max(0, self.count - ((self.count - 1) % self.limit) - 1)
 
         url = self.request.build_absolute_uri()
         url = replace_query_param(url, self.limit_query_param, self.limit)
