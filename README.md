@@ -59,6 +59,7 @@ Other pagination classes that are available are:
 - `LinkHeaderCursorPagination`: This is similar to the normal [`CursorPagination`](cursor-pagination) class but using the `Link` header to return only the `next` and/or `prev` links. The `first` and `last` links are unavailable.
 - `LinkHeaderLinkResponseCursorPagination`: This is similar to
   `LinkHeaderCursorPagination`, but in addition to the `next` and/or `prev` URL's being in the `Link` header, the content of the response body is updated to include them as well. The body will be an object with the keys `next` (the next page's URL or None), `previous` (the previous page's URL or None), and `results` (the original content of the body).
+- `LinkHeaderLimitOffsetPagination`: [Uses the `LimitOffsetPagination` pagination class from DRF](https://www.django-rest-framework.org/api-guide/pagination/#limitoffsetpagination) to support `offset` and `limit` parameters instead of `page` to indicate offset into the queryset. 
 
 ## Configuration
 
