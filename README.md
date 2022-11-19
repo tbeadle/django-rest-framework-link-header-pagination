@@ -36,7 +36,7 @@ This pagination style accepts a single page number in the request query paramete
 Install using ``pip``:
 
 ```bash
-$ pip install djangorestframework-link-header-pagination
+$ pip install drf-link-header-pagination
 ```
 
 ## Setup
