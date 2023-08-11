@@ -36,7 +36,7 @@ This pagination style accepts a single page number in the request query paramete
 Install using ``pip``:
 
 ```bash
-$ pip install djangorestframework-link-header-pagination
+$ pip install drf-link-header-pagination
 ```
 
 ## Setup
@@ -77,7 +77,7 @@ $ tox
 ```
 
 [build-status-image]: https://secure.travis-ci.org/tbeadle/django-rest-framework-link-header-pagination.svg?branch=master
-[pypi-version]: https://img.shields.io/pypi/v/djangorestframework-link-header-pagination.svg
+[pypi-version]: https://img.shields.io/pypi/v/drf-link-header-pagination/.svg
 [github-pagination]: https://docs.github.com/en/rest/guides/traversing-with-pagination
 [requests]: http://docs.python-requests.org
 [requests-link-header]: http://docs.python-requests.org/en/master/user/advanced/#link-headers
